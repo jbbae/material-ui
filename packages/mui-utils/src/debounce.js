@@ -2,16 +2,26 @@
 // A few bytes payload overhead when lodash/debounce is ~3 kB and debounce ~300 B.
 export default function debounce(func, wait = 166) {
   let timeout;
+  let pending;
   function debounced(...args) {
-    const later = () => {
+    pending = () => {
       func.apply(this, args);
     };
     clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+    timeout = setTimeout(debounced.flush, wait);
   }
 
   debounced.clear = () => {
     clearTimeout(timeout);
+    pending = undefined;
+  };
+
+  debounced.flush = () => {
+    const task = pending;
+    debounced.clear();
+    if (task) {
+      task();
+    }
   };
 
   return debounced;
