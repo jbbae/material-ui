@@ -8,6 +8,12 @@ import GlobalStyles from './GlobalStyles';
 describe('GlobalStyles', () => {
   const { render } = createRenderer();
 
+  it('should accept an array of styles without a prop warning', () => {
+    expect(() =>
+      render(<GlobalStyles styles={[{ body: { color: 'red' } }, { body: { margin: 0 } }]} />),
+    ).not.toErrorDev();
+  });
+
   it('should add global styles', function test() {
     if (/jsdom/.test(window.navigator.userAgent)) {
       this.skip();
